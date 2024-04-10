@@ -15,11 +15,11 @@ const Navbar = () => {
 
   const handleTestMenuHover = () => {
     setShowTestMenu(true);
-  }
+  };
 
   const handleTestMenuLeave = () => {
     setShowTestMenu(false);
-  }
+  };
   return (
     <>
       <nav className="bg-gray-800 py-4 flex items-start justify-between fixed top-0 left-0 h-screen">
@@ -36,7 +36,10 @@ const Navbar = () => {
               onMouseEnter={handlePlayMenuHover}
               onMouseLeave={handlePlayMenuLeave}
             >
-              <a href="/play" className="text-white hover:text-green-300  my-2.5 px-4">
+              <a
+                href="/play"
+                className="text-white hover:text-green-300  my-2.5 px-4"
+              >
                 Play
               </a>
               {showPlayMenu && (
@@ -52,7 +55,6 @@ const Navbar = () => {
                     </a>
                   </div>
                 </div>
-                
               )}
             </div>
             <div
@@ -60,24 +62,39 @@ const Navbar = () => {
               onMouseEnter={handleTestMenuHover}
               onMouseLeave={handleTestMenuLeave}
             >
-              <a href="/test" className="text-white hover:text-green-300  my-2.5 px-4">
+              <a
+                href="/test"
+                className="text-white hover:text-green-300  my-2.5 px-4"
+              >
                 Test
               </a>
               {showTestMenu && (
                 <div className="bg-gray-800 absolute top-0 left-full mt-0.5 w-64 h-full">
                   <div className="hover:bg-gray-700 cursor-pointer">
-                    <a href="/test/MoveValidation" className="text-white block px-4 py-2">
+                    <a
+                      href="/test/MoveValidation"
+                      className="text-white block px-4 py-2"
+                    >
                       Move Validation
                     </a>
-                  </div>     
+                  </div>
                   <div className="hover:bg-gray-700 cursor-pointer">
-                    <a href="/test/Stockfish" className="text-white block px-4 py-2">
+                    <a
+                      href="/test/Stockfish"
+                      className="text-white block px-4 py-2"
+                    >
                       Stockfish
                     </a>
-                  </div>              
+                  </div>
+                  <div className="hover:bg-gray-700 cursor-pointer">
+                    <a
+                      href="/test/Evaluation"
+                      className="text-white block px-4 py-2"
+                    >
+                      Evaluation
+                    </a>
+                  </div>
                 </div>
-                
-                
               )}
             </div>
             <div className="hover:bg-gray-700 cursor-pointer w-full flex justify-between">
