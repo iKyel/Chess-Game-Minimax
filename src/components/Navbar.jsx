@@ -94,6 +94,14 @@ const Navbar = () => {
                       Evaluation
                     </a>
                   </div>
+                  <div className="hover:bg-gray-700 cursor-pointer">
+                    <a
+                      href="/test/BoardTest"
+                      className="text-white block px-4 py-2"
+                    >
+                      BoardTest
+                    </a>
+                  </div>
                 </div>
               )}
             </div>

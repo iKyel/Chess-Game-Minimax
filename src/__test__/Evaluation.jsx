@@ -1,97 +1,128 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Chess } from "chess.js";
-import Chessboard from "chessboardjsx";
+import ChessBoard from "chessboardjsx";
 
-const Evaluation = () => {
-  const [game, setGame] = useState(new Chess());
-  const [events, setEvents] = useState({});
+const Board = ({ children }) => {
+  const [game, setGame] = useState();
+  const [fen, setFen] = useState("start");
 
   useEffect(() => {
-    const handleMove = (move) => {
-      const gameCopy = new Chess(game.fen());
-      const result = gameCopy.move(move);
-      if (result) {
-        setGame(gameCopy);
+    setGame(new Chess());
+  }, []);
+
+  /* Hiển thị bàn cờ */
+
+  // Di chuyển quân cờ
+  const onDrop = ({ sourceSquare, targetSquare }) => {
+    if (!isMoveLegal(sourceSquare, targetSquare)) {
+      return;
+    }
+
+    game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: "q",
+    });
+
+    const aiMove = calculateBestMove(game)
+    game.move(aiMove)
+    setFen(game.fen());
+  };
+
+  // Kiểm tra nước đi hợp lệ
+  const isMoveLegal = (sourceSquare, targetSquare) => {
+    const moves = game.moves({ verbose: true });
+    for (let i = 0; i < moves.length; i++) {
+      if (moves[i].from === sourceSquare && moves[i].to === targetSquare) {
+        return true;
       }
-    };
+    }
+    return false;
+  };
 
-    setEvents({ onMove: handleMove });
+  /* AI Part */
 
-    return () => {}; // Cleanup function
-  }, [game]);
+  /* 
+  Tính toán giá trị tốt nhất theo tổng giá trị bàn cờ
+  Nếu giá trị âm => đen có lợi thế
+  */
+  const calculateBestMove = (game) => {
+    const newGameMoves = game.moves({ verbose: true })
+    let bestMove = null
+    let bestValue = -9999 // giá trị âm lớn để khởi tạo
+    for(let i = 0; i < newGameMoves.length; i++) {
+      const newGameMove = newGameMoves[i]
+      game.move(newGameMove)
 
-  const calculateBestMove = () => {
-    const newGameMoves = game.ugly_moves();
-    let bestMove = null;
-    let bestValue = -9999;
+      // Đánh giá giá trị bàn cờ sau khi di chuyển
+      const boardValue = -evaluateBoard(game.board())
+      game.undo()
 
-    for (let i = 0; i < newGameMoves.length; i++) {
-      const newGameMove = newGameMoves[i];
-      const gameCopy = new Chess(game.fen());
-      gameCopy.ugly_move(newGameMove);
-      const boardValue = -evaluateBoard(gameCopy.board());
-      gameCopy.undo();
       if (boardValue > bestValue) {
         bestValue = boardValue;
         bestMove = newGameMove;
       }
     }
-
     return bestMove;
-  };
+  }
 
   const evaluateBoard = (board) => {
     let totalEvaluation = 0;
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        totalEvaluation += getPieceValue(board[i][j]);
+    for(let i = 0; i < 8; i++) {
+      for(let j = 0; j < 8; j++) {
+        totalEvaluation += getPieceValue(board[i][j])
       }
     }
-    return totalEvaluation;
-  };
+    return totalEvaluation
+  }
 
   const getPieceValue = (piece) => {
-    if (piece === null) {
+    if(piece == null) {
       return 0;
     }
-    const getAbsoluteValue = (piece) => {
-      if (piece.type === "p") {
+    const absoluteValue = getAbsoluteValue(piece.type);
+    return piece.color === 'w' ? absoluteValue : -absoluteValue
+  }
+
+  const getAbsoluteValue = (piece) => {
+    switch (piece) {
+      case 'p':
         return 10;
-      } else if (piece.type === "r") {
+      case 'r':
         return 50;
-      } else if (piece.type === "n") {
+      case 'n':
         return 30;
-      } else if (piece.type === "b") {
+      case 'b':
         return 30;
-      } else if (piece.type === "q") {
+      case 'q':
         return 90;
-      } else if (piece.type === "k") {
+      case 'k':
         return 900;
-      }
-      throw "Unknown piece type: " + piece.type;
-    };
+      default:
+        throw new Error(`Cờ ${piece} không đúng loại`)
+    }
+  }
 
-    const absoluteValue = getAbsoluteValue(piece, piece.color === "w");
-    return piece.color === "w" ? absoluteValue : -absoluteValue;
-  };
-
-  const makeBestMove = () => {
-    const bestMove = calculateBestMove(game);
-    const gameCopy = new Chess(game.fen());
-    gameCopy.ugly_move(bestMove);
-    setGame(gameCopy);
-  };
-
+  return children({
+    position: fen,
+    onDrop,
+  });
+};
+const Evaluation = () => {
   return (
     <div>
-      <div className="flex-grow ml-60 mr-32 pt-4">
-        <Chessboard
-          position={game.fen()}
-          boardOrientation="white"
-          setEvents={events}
-        />
-        <button onClick={makeBestMove}>Make Best Move</button>
-      </div>
+      <Board>
+        {({
+          onDrop,
+          position,
+        }) => (
+          <ChessBoard
+            width={600}
+            position={position}
+            onDrop={onDrop}
+          />
+        )}
+      </Board>
     </div>
   );
 };

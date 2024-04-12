@@ -5,21 +5,23 @@ import { Chess } from "chess.js";
 import Chessboard from "chessboardjsx";
 
 const HumanVsHuman = ({ children }) => {
-  const [fen, setFen] = useState("start");
-  const [dropSquareStyle, setDropSquareStyle] = useState({});
-  const [squareStyles, setSquareStyles] = useState({});
-  const [pieceSquare, setPieceSquare] = useState("");
-  const [history, setHistory] = useState([]);
-  const [game, setGame] = useState(new Chess());
+  const [fen, setFen] = useState("start"); // vị trí các quân trên bàn cờ
+  const [dropSquareStyle, setDropSquareStyle] = useState({}); // kiểu dáng khi kéo thả quân cờ
+  const [squareStyles, setSquareStyles] = useState({}); // kiểu dáng cho ô vuông trên bàn cờ
+  const [pieceSquare, setPieceSquare] = useState(""); // ô vuông hiện tại được chọn
+  const [history, setHistory] = useState([]); // lịch sử nước đi
+  const [game, setGame] = useState(); // game
 
   useEffect(() => {
     setGame(new Chess());
   }, []);
 
+  // Loại bỏ màu ô vuông được tô
   const removeHighlightSquare = () => {
     setSquareStyles(squareStyling({ pieceSquare, history }));
   };
 
+  // Tô màu ô vuông
   const highlightSquare = (sourceSquare, squaresToHighlight) => {
     const highlightStyles = [sourceSquare, ...squaresToHighlight].reduce(
       (a, c) => {
@@ -27,7 +29,6 @@ const HumanVsHuman = ({ children }) => {
           ...a,
           [c]: {
             background: "radial-gradient(circle, #fffc00 36%, transparent 40%)",
-            borderRadius: "50%"
           }
         };
       },
@@ -37,6 +38,7 @@ const HumanVsHuman = ({ children }) => {
     setSquareStyles((prevStyles) => ({ ...prevStyles, ...highlightStyles }));
   };
 
+  // Kéo thả quân cờ từ vị trí nguồn đến vị trí được chọn
   const onDrop = ({ sourceSquare, targetSquare }) => {
     if (!isMoveLegal(sourceSquare, targetSquare)) {
       return;
@@ -47,12 +49,13 @@ const HumanVsHuman = ({ children }) => {
       to: targetSquare,
       promotion: "q"
     });
-
+      
     setFen(game.fen());
     setHistory(game.history({ verbose: true }));
     setSquareStyles(squareStyling({ pieceSquare, history }));
   };
 
+  // Kiểm tra nước đi hợp lệ
   const isMoveLegal = (sourceSquare, targetSquare) => {
     const moves = game.moves({ verbose: true });
     for (let i = 0; i < moves.length; i++) {
@@ -63,6 +66,7 @@ const HumanVsHuman = ({ children }) => {
     return false;
   };
 
+  // Lấy danh sách nước đi hợp lệ
   const onMouseOverSquare = (square) => {
     let moves = game.moves({
       square: square,
@@ -79,16 +83,19 @@ const HumanVsHuman = ({ children }) => {
     highlightSquare(square, squaresToHighlight);
   };
 
+  // Loại bỏ tô sáng khi di chuột
   const onMouseOutSquare = (square) => removeHighlightSquare(square);
 
+  // ô vuông với nước đi hợp lệ
   const onDragOverSquare = (square) => {
     setDropSquareStyle(
-      square === "e4" || square === "d4" || square === "e5" || square === "d5"
-        ? { backgroundColor: "cornFlowerBlue" }
-        : { boxShadow: "inset 0 0 1px 4px rgb(255, 255, 0)" }
+      // square === "e4" || square === "d4" || square === "e5" || square === "d5"
+      //   ? { backgroundColor: "cornFlowerBlue" }
+      //   : { boxShadow: "inset 0 0 1px 4px rgb(255, 255, 0)" }
     );
   };
-
+  
+  // Nhấp chuột vào một ô vuông
   const onSquareClick = (square) => {
     setSquareStyles(squareStyling({ pieceSquare: square, history }));
     setPieceSquare(square);
@@ -107,7 +114,7 @@ const HumanVsHuman = ({ children }) => {
   };
 
   const onSquareRightClick = (square) => {
-    setSquareStyles({ [square]: { backgroundColor: "deepPink" } });
+    setSquareStyles({ [square]: { backgroundColor: "Green" } });
   };
 
   return children({
