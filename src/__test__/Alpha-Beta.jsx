@@ -3,40 +3,73 @@ var board,
 
 /*The "AI" part starts here */
 
-var calculateBestMove = function(game) {
+var minimaxRoot =function(depth, game, isMaximisingPlayer) {
+
     var newGameMoves = game.ugly_moves();
-    var bestMove = null;
-    //use any negative large number
-    var bestValue = -9999;
+    var bestMove = -9999;
+    var bestMoveFound;
 
     for(var i = 0; i < newGameMoves.length; i++) {
-        var newGameMove = newGameMoves[i];
+        var newGameMove = newGameMoves[i]
         game.ugly_move(newGameMove);
-
-        //take the negative as AI plays as black
-        var boardValue = -evaluateBoard(game.board())
+        var value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer);
         game.undo();
-        if(boardValue > bestValue) {
-            bestValue = boardValue;
-            bestMove = newGameMove
+        if(value >= bestMove) {
+            bestMove = value;
+            bestMoveFound = newGameMove;
         }
     }
+    return bestMoveFound;
+};
 
-    return bestMove;
+var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
+    positionCount++;
+    if (depth === 0) {
+        return -evaluateBoard(game.board());
+    }
 
+    var newGameMoves = game.ugly_moves();
+
+    if (isMaximisingPlayer) {
+        var bestMove = -9999;
+        for (var i = 0; i < newGameMoves.length; i++) {
+            game.ugly_move(newGameMoves[i]);
+            bestMove = Math.max(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            game.undo();
+            alpha = Math.max(alpha, bestMove);
+            if (beta <= alpha) {
+                return bestMove;
+            }
+        }
+        return bestMove;
+    } else {
+        var bestMove = 9999;
+        for (var i = 0; i < newGameMoves.length; i++) {
+            game.ugly_move(newGameMoves[i]);
+            bestMove = Math.min(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+            game.undo();
+            beta = Math.min(beta, bestMove);
+            if (beta <= alpha) {
+                return bestMove;
+            }
+        }
+        return bestMove;
+    }
 };
 
 var evaluateBoard = function (board) {
     var totalEvaluation = 0;
     for (var i = 0; i < 8; i++) {
         for (var j = 0; j < 8; j++) {
-            totalEvaluation = totalEvaluation + getPieceValue(board[i][j]);
+            totalEvaluation = totalEvaluation + getPieceValue(board[i][j], i ,j);
         }
     }
     return totalEvaluation;
 };
 
-var getPieceValue = function (piece) {
+
+
+var getPieceValue = function (piece, x, y) {
     if (piece === null) {
         return 0;
     }
@@ -48,7 +81,7 @@ var getPieceValue = function (piece) {
         } else if (piece.type === 'n') {
             return 30;
         } else if (piece.type === 'b') {
-            return 30 ;
+            return 30;
         } else if (piece.type === 'q') {
             return 90;
         } else if (piece.type === 'k') {
@@ -57,11 +90,12 @@ var getPieceValue = function (piece) {
         throw "Unknown piece type: " + piece.type;
     };
 
-    var absoluteValue = getAbsoluteValue(piece, piece.color === 'w');
+    var absoluteValue = getAbsoluteValue(piece);
     return piece.color === 'w' ? absoluteValue : -absoluteValue;
 };
 
-/* board visualization and games state handling starts here*/
+
+/* board visualization and games state handling */
 
 var onDragStart = function (source, piece, position, orientation) {
     if (game.in_checkmate() === true || game.in_draw() === true ||
@@ -80,11 +114,25 @@ var makeBestMove = function () {
     }
 };
 
+
+var positionCount;
 var getBestMove = function (game) {
     if (game.game_over()) {
         alert('Game over');
     }
-    var bestMove = calculateBestMove(game);
+
+    positionCount = 0;
+    var depth = parseInt($('#search-depth').find(':selected').text());
+
+    var d = new Date().getTime();
+    var bestMove = minimaxRoot(depth, game, true);
+    var d2 = new Date().getTime();
+    var moveTime = (d2 - d);
+    var positionsPerS = ( positionCount * 1000 / moveTime);
+
+    $('#position-count').text(positionCount);
+    $('#time').text(moveTime/1000 + 's');
+    $('#positions-per-s').text(positionsPerS);
     return bestMove;
 };
 

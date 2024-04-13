@@ -24,8 +24,8 @@ const Board = ({ children }) => {
       promotion: "q",
     });
 
-    const aiMove = calculateBestMove(game)
-    game.move(aiMove)
+    const aiMove = calculateBestMove(game);
+    game.move(aiMove);
     setFen(game.fen());
   };
 
@@ -47,16 +47,16 @@ const Board = ({ children }) => {
   Nếu giá trị âm => đen có lợi thế
   */
   const calculateBestMove = (game) => {
-    const newGameMoves = game.moves({ verbose: true })
-    let bestMove = null
-    let bestValue = -9999 // giá trị âm lớn để khởi tạo
-    for(let i = 0; i < newGameMoves.length; i++) {
-      const newGameMove = newGameMoves[i]
-      game.move(newGameMove)
+    const newGameMoves = game.moves({ verbose: true });
+    let bestMove = null;
+    let bestValue = -9999; // giá trị âm lớn để khởi tạo
+    for (let i = 0; i < newGameMoves.length; i++) {
+      const newGameMove = newGameMoves[i];
+      game.move(newGameMove);
 
       // Đánh giá giá trị bàn cờ sau khi di chuyển
-      const boardValue = -evaluateBoard(game.board())
-      game.undo()
+      const boardValue = -evaluateBoard(game.board());
+      game.undo();
 
       if (boardValue > bestValue) {
         bestValue = boardValue;
@@ -64,44 +64,44 @@ const Board = ({ children }) => {
       }
     }
     return bestMove;
-  }
-
+  };
+  
   const evaluateBoard = (board) => {
     let totalEvaluation = 0;
-    for(let i = 0; i < 8; i++) {
-      for(let j = 0; j < 8; j++) {
-        totalEvaluation += getPieceValue(board[i][j])
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        totalEvaluation += getPieceValue(board[i][j]);
       }
     }
-    return totalEvaluation
-  }
+    return totalEvaluation;
+  };
 
   const getPieceValue = (piece) => {
-    if(piece == null) {
+    if (piece == null) {
       return 0;
     }
     const absoluteValue = getAbsoluteValue(piece.type);
-    return piece.color === 'w' ? absoluteValue : -absoluteValue
-  }
+    return piece.color === "w" ? absoluteValue : -absoluteValue;
+  };
 
   const getAbsoluteValue = (piece) => {
     switch (piece) {
-      case 'p':
+      case "p":
         return 10;
-      case 'r':
+      case "r":
         return 50;
-      case 'n':
+      case "n":
         return 30;
-      case 'b':
+      case "b":
         return 30;
-      case 'q':
+      case "q":
         return 90;
-      case 'k':
+      case "k":
         return 900;
       default:
-        throw new Error(`Cờ ${piece} không đúng loại`)
+        throw new Error(`Cờ ${piece} không đúng loại`);
     }
-  }
+  };
 
   return children({
     position: fen,
@@ -112,15 +112,8 @@ const Evaluation = () => {
   return (
     <div>
       <Board>
-        {({
-          onDrop,
-          position,
-        }) => (
-          <ChessBoard
-            width={600}
-            position={position}
-            onDrop={onDrop}
-          />
+        {({ onDrop, position }) => (
+          <ChessBoard width={600} position={position} onDrop={onDrop} />
         )}
       </Board>
     </div>

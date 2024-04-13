@@ -102,6 +102,24 @@ const Navbar = () => {
                       BoardTest
                     </a>
                   </div>
+
+                  <div className="hover:bg-gray-700 cursor-pointer">
+                    <a
+                      href="/test/Minimax"
+                      className="text-white block px-4 py-2"
+                    >
+                      Minimax
+                    </a>
+                  </div>
+
+                  <div className="hover:bg-gray-700 cursor-pointer">
+                    <a
+                      href="/test/AlphaBetaPruning"
+                      className="text-white block px-4 py-2"
+                    >
+                      Cắt Tỉa Alpha Beta 
+                    </a>
+                  </div>
                 </div>
               )}
             </div>

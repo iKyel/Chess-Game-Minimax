@@ -9,6 +9,8 @@ import MainLayout from "./layouts/MainLayout";
 import MoveValidationPage from "./pages/MoveValidationPage";
 import BoardTestPage from "./pages/BoardTestPage";
 import EvaluationPage from "./pages/EvaluationPage";
+import MinimaxPage from "./pages/MinimaxPage";
+import Alpha_betaPruningPage from "./pages/Alpha_betaPruningPage";
 
 
 const router = createBrowserRouter(
@@ -18,6 +20,8 @@ const router = createBrowserRouter(
       <Route path="/test/MoveValidation" element={<MoveValidationPage/>}/>
       <Route path="/test/Evaluation" element={<EvaluationPage />}/>
       <Route path="/test/BoardTest" element={<BoardTestPage />} />
+      <Route path="/test/Minimax" element={<MinimaxPage />} />
+      <Route path="/test/AlphaBetaPruning" element={<Alpha_betaPruningPage />} />
     </Route>
   )
 );
