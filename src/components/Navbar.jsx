@@ -120,6 +120,15 @@ const Navbar = () => {
                       Cắt Tỉa Alpha Beta 
                     </a>
                   </div>
+
+                  <div className="hover:bg-gray-700 cursor-pointer">
+                    <a
+                      href="/test/SimplifiedEvaluationFunction"
+                      className="text-white block px-4 py-2"
+                    >
+                      Hàm đánh giá đơn giản 
+                    </a>
+                  </div>
                 </div>
               )}
             </div>

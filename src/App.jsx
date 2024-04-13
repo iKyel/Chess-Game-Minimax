@@ -11,6 +11,7 @@ import BoardTestPage from "./pages/BoardTestPage";
 import EvaluationPage from "./pages/EvaluationPage";
 import MinimaxPage from "./pages/MinimaxPage";
 import Alpha_betaPruningPage from "./pages/Alpha_betaPruningPage";
+import SimplifiedEvaluationFunctionPage from "./pages/SimplifiedEvaluationFunctionPage";
 
 
 const router = createBrowserRouter(
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
       <Route path="/test/BoardTest" element={<BoardTestPage />} />
       <Route path="/test/Minimax" element={<MinimaxPage />} />
       <Route path="/test/AlphaBetaPruning" element={<Alpha_betaPruningPage />} />
+      <Route path="/test/SimplifiedEvaluationFunction" element={<SimplifiedEvaluationFunctionPage />} />
     </Route>
   )
 );
