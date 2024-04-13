@@ -5,6 +5,8 @@ import Chessboard from "chessboardjsx";
 const Board = ({ children }) => {
   const [game, setGame] = useState();
   const [fen, setFen] = useState("start");
+  const [allPositionCount, setAllPostitionCount] = useState(0);
+  let positionCount = 0;
   //   const [moveHistory, setMoveHistory] = useState([]);
 
   useEffect(() => {
@@ -62,6 +64,7 @@ const Board = ({ children }) => {
     const depthSelect = document.getElementById("depth-select");
     const depth = parseInt(depthSelect.value);
     let bestMove = minimaxRoot(depth, game, true);
+    
 
     return bestMove;
   };
@@ -81,11 +84,18 @@ const Board = ({ children }) => {
         bestMoveFound = newAIMove;
       }
     }
-    document.getElementById("bestValue").innerHTML = `Giá trị tốt nhất: ${bestValue}` + " ";
+    document.getElementById("bestValue").innerHTML =
+      `Giá trị tốt nhất: ${-bestValue}` + " ";
+    document.getElementById("postitionCount").innerHTML =
+      `Số vị trí đã tính toán: ${positionCount}` + " ";
+    document.getElementById("allPostitionCount").innerHTML =
+      `Tổng số vị trí đã tính toán: ${allPositionCount+positionCount}` + " ";
     return bestMoveFound;
   };
 
   const minimax = (depth, game, alpha, beta, isMaximisingPlayer) => {
+    positionCount++;
+    setAllPostitionCount((count) => count + 1);
     if (depth === 0) {
       return -evaluateBoard(game.board()); // tra ve -10
     }
@@ -93,33 +103,33 @@ const Board = ({ children }) => {
     let newAIMoves = game.moves({ verbose: true });
 
     if (isMaximisingPlayer) {
-      let value = -9999;
+      let bestValue = -9999;
       for (let i = 0; i < newAIMoves.length; i++) {
         game.move(newAIMoves[i]);
-        value = Math.max(value, minimax(depth - 1, game, !isMaximisingPlayer));
+        bestValue = Math.max(bestValue, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
         game.undo();
 
         /* Cắt tỉa alpha beta */
-        alpha = Math.max(alpha, value);
+        alpha = Math.max(alpha, bestValue);
         if(beta <= alpha) {
-            return value;
+            return bestValue;
         }
       }
-      return value;
+      return bestValue;
     } else {
-      let value = 9999;
+      let bestValue = 9999;
       for (let i = 0; i < newAIMoves.length; i++) {
         game.move(newAIMoves[i]);
-        value = Math.min(value, minimax(depth - 1, game, !isMaximisingPlayer));
+        bestValue = Math.min(bestValue, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
         game.undo();
 
         /* Cắt tỉa alpha beta */
-        alpha = Math.min(alpha, value)
+        beta = Math.min(beta, bestValue)
         if(beta <= alpha) {
-            return value;
+            return bestValue;
         }
       }
-      return value;
+      return bestValue;
     }
   };
 
@@ -179,7 +189,11 @@ const Alpha_Beta_Pruning = () => {
         <Board>
           {({ onDrop, position, handleUndo }) => (
             <div className="flex justify-between">
-              <Chessboard width={600} position={position} onDrop={onDrop} />
+              <Chessboard
+                width={600}
+                position={position}
+                onDrop={onDrop}
+              />
               <div className="minimax-info ml-4">
                 <button
                   onClick={handleUndo}
@@ -200,7 +214,8 @@ const Alpha_Beta_Pruning = () => {
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>
-
+                <p id="postitionCount">Số vị trí đã tính toán: </p>
+                <p id="allPostitionCount">Tổng số vị trí đã tính toán: </p>
                 <p id="bestValue">Giá trị tốt nhất: </p>
                 <p id="history"></p>
                 <p id="isGameOver">Trạng thái: </p>

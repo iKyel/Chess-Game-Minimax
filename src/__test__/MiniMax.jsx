@@ -5,9 +5,10 @@ import Chessboard from "chessboardjsx";
 const Board = ({ children }) => {
   const [game, setGame] = useState();
   const [fen, setFen] = useState("start");
+  const [allPositionCount, setAllPostitionCount] = useState(0);
   let positionCount = 0;
 
-  //   const [moveHistory, setMoveHistory] = useState([]);
+  // const [moveHistory, setMoveHistory] = useState([]);
 
   useEffect(() => {
     setGame(new Chess());
@@ -32,6 +33,7 @@ const Board = ({ children }) => {
     setFen(game.fen());
     if (game.isGameOver()) {
       document.getElementById("isGameOver").innerHTML += `Game Over`;
+      // setAllowDrag(false);
     }
   };
 
@@ -69,7 +71,7 @@ const Board = ({ children }) => {
   };
 
   const minimaxRoot = (depth, game, isMaximisingPlayer) => {
-    let newAIMoves = game.moves({ verbose: true });
+    let newAIMoves = game.moves({});
     let bestValue = -9999;
     let bestMoveFound = null;
 
@@ -83,21 +85,25 @@ const Board = ({ children }) => {
         bestMoveFound = newAIMove;
       }
     }
+
     document.getElementById("bestValue").innerHTML =
       `Giá trị tốt nhất: ${-bestValue}` + " ";
     document.getElementById("postitionCount").innerHTML =
       `Số vị trí đã tính toán: ${positionCount}` + " ";
+    document.getElementById("allPostitionCount").innerHTML =
+      `Tổng số vị trí đã tính toán: ${allPositionCount+positionCount}` + " ";
 
     return bestMoveFound;
   };
 
   const minimax = (depth, game, isMaximisingPlayer) => {
     positionCount++;
+    setAllPostitionCount((count) => count + 1);
     if (depth === 0) {
       return -evaluateBoard(game.board()); // tra ve -10
     }
 
-    let newAIMoves = game.moves({ verbose: true });
+    let newAIMoves = game.moves({});
 
     if (isMaximisingPlayer) {
       let value = -9999;
@@ -164,6 +170,7 @@ const Board = ({ children }) => {
     position: fen,
     onDrop,
     handleUndo,
+    // allowDrag,
   });
 };
 
@@ -174,7 +181,11 @@ const MiniMax = () => {
         <Board>
           {({ onDrop, position, handleUndo }) => (
             <div className="flex justify-between">
-              <Chessboard width={600} position={position} onDrop={onDrop} />
+              <Chessboard
+                width={600}
+                position={position}
+                onDrop={onDrop}
+              />
               <div className="minimax-info ml-4">
                 <button
                   onClick={handleUndo}
