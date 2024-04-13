@@ -64,7 +64,6 @@ const Board = ({ children }) => {
     const depthSelect = document.getElementById("depth-select");
     const depth = parseInt(depthSelect.value);
     let bestMove = minimaxRoot(depth, game, true);
-    
 
     return bestMove;
   };
@@ -89,7 +88,7 @@ const Board = ({ children }) => {
     document.getElementById("postitionCount").innerHTML =
       `Số vị trí đã tính toán: ${positionCount}` + " ";
     document.getElementById("allPostitionCount").innerHTML =
-      `Tổng số vị trí đã tính toán: ${allPositionCount+positionCount}` + " ";
+      `Tổng số vị trí đã tính toán: ${allPositionCount + positionCount}` + " ";
     return bestMoveFound;
   };
 
@@ -106,13 +105,16 @@ const Board = ({ children }) => {
       let bestValue = -9999;
       for (let i = 0; i < newAIMoves.length; i++) {
         game.move(newAIMoves[i]);
-        bestValue = Math.max(bestValue, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+        bestValue = Math.max(
+          bestValue,
+          minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer)
+        );
         game.undo();
 
         /* Cắt tỉa alpha beta */
         alpha = Math.max(alpha, bestValue);
-        if(beta <= alpha) {
-            return bestValue;
+        if (beta <= alpha) {
+          return bestValue;
         }
       }
       return bestValue;
@@ -120,13 +122,16 @@ const Board = ({ children }) => {
       let bestValue = 9999;
       for (let i = 0; i < newAIMoves.length; i++) {
         game.move(newAIMoves[i]);
-        bestValue = Math.min(bestValue, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
+        bestValue = Math.min(
+          bestValue,
+          minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer)
+        );
         game.undo();
 
         /* Cắt tỉa alpha beta */
-        beta = Math.min(beta, bestValue)
-        if(beta <= alpha) {
-            return bestValue;
+        beta = Math.min(beta, bestValue);
+        if (beta <= alpha) {
+          return bestValue;
         }
       }
       return bestValue;
@@ -189,11 +194,7 @@ const Alpha_Beta_Pruning = () => {
         <Board>
           {({ onDrop, position, handleUndo }) => (
             <div className="flex justify-between">
-              <Chessboard
-                width={600}
-                position={position}
-                onDrop={onDrop}
-              />
+              <Chessboard width={600} position={position} onDrop={onDrop} />
               <div className="minimax-info ml-4">
                 <button
                   onClick={handleUndo}
@@ -207,10 +208,8 @@ const Alpha_Beta_Pruning = () => {
                   className="block w-200 bg-black border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
                   <option value="1">1</option>
-                  <option value="2" selected>
-                    2
-                  </option>
-                  <option value="3">3</option>
+                  <option value="2">2</option>
+                  <option value="3 selected">3</option>
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>
