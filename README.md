@@ -19,7 +19,8 @@
 4. Cài đặt các gói phụ thuộc: `npm install`
 
 ## Chạy dự án
-
+Có thể chơi ngay tại: `chess-game-minimax.onrender.com/` 
+Hoặc chạy trên localhost:
 1. Khởi động ứng dụng React: `npm run dev`
 2. Truy cập `http://localhost:5173/` trong trình duyệt.
 
