@@ -27,7 +27,7 @@ const Navbar = () => {
               onMouseLeave={handleTestMenuLeave}
             >
               <a
-                href="/test"
+                href="/"
                 className="text-white hover:text-green-300  my-2.5 px-4"
               >
                 Chế độ
