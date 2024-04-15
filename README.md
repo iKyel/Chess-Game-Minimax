@@ -14,8 +14,8 @@
 ## Cài đặt
 
 1. Cài đặt [Node.js](https://nodejs.org/) nếu bạn chưa có.
-2. Clone dự án này: `git clone https://github.com/your-repo.git`
-3. Chuyển đến thư mục dự án: `cd your-repo`
+2. Clone dự án này: `https://github.com/iKyel/Chess-Game-Minimax.git`
+3. Chuyển đến thư mục dự án: `cd Chess-Game-Minimax`
 4. Cài đặt các gói phụ thuộc: `npm install`
 
 ## Chạy dự án
