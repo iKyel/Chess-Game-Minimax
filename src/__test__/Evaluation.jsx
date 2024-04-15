@@ -33,9 +33,12 @@ const Board = ({ children }) => {
       promotion: "q",
     });
 
-    
     const aiMove = calculateBestMove(game);
-    game.move(aiMove);
+    if (aiMove !== null) {
+      // Kiểm tra nếu aiMove không phải null
+      game.move(aiMove);
+
+    }
     setHistory(game.history());
     setFen(game.fen());
 
@@ -85,7 +88,9 @@ const Board = ({ children }) => {
         bestMove = newGameMove;
       }
     }
-    document.getElementById('best-value').innerHTML = `Giá trị tốt nhất: ${-bestValue}`
+    document.getElementById(
+      "best-value"
+    ).innerHTML = `Giá trị tốt nhất: ${-bestValue}`;
     return bestMove;
   };
 
@@ -159,12 +164,14 @@ const Evaluation = () => {
               onMouseOverSquare={onMouseOverSquare}
               onMouseOutSquare={onMouseOutSquare}
             />
-            <div className="random-info ml-4">
+            <div className="evaluation-info ml-4">
               <RenderMoveHistory moves={history} />
               <button
                 onClick={handleUndo}
                 className="bg-indigo-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
-              >Undo</button>
+              >
+                Undo
+              </button>
               <p id="best-value">Giá trị tốt nhất: </p>
               <p id="is-game-over">Trạng thái: </p>
             </div>

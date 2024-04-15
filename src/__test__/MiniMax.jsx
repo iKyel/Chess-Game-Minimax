@@ -239,7 +239,7 @@ const MiniMax = () => {
                 <p id="allPostitionCount">Tổng số vị trí đã tính toán: </p>
                 <p id="bestValue">Giá trị tốt nhất: </p>
                 <p id="history"></p>
-                <p id="isGameOver">Trạng thái: </p>
+                <p id="is-game-over">Trạng thái: </p>
               </div>
             </div>
           )}
