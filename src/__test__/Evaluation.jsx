@@ -85,7 +85,7 @@ const Board = ({ children }) => {
         bestMove = newGameMove;
       }
     }
-    document.getElementById('best-value').innerHTML = `Giá trị tốt nhất: ${bestValue}`
+    document.getElementById('best-value').innerHTML = `Giá trị tốt nhất: ${-bestValue}`
     return bestMove;
   };
 
