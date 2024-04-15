@@ -20,7 +20,7 @@ const RenderMoveHistory = ({ moves }) => {
       >
         {moves.map((move, index) => (
           <div key={index} className="p-2">
-            {index} {move}
+            {index}: {move}
           </div>
         ))}
       </div>
