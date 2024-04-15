@@ -56,6 +56,11 @@ const Board = ({ children }) => {
   // Loại bỏ tô sáng khi di chuột
   const onMouseOutSquare = (square) => removeHighlightSquare(square);
 
+  const handleUndo = () => {
+    game.undo();
+    setFen(game.fen());
+  };
+
   /* AI Part */
 
   /* 
@@ -126,6 +131,7 @@ const Board = ({ children }) => {
     onMouseOverSquare,
     onMouseOutSquare,
     history,
+    handleUndo,
   });
 };
 
@@ -140,6 +146,7 @@ const Evaluation = () => {
           onMouseOverSquare,
           onMouseOutSquare,
           history,
+          handleUndo,
         }) => (
           <div className="flex justify-between">
             <ChessBoard
@@ -152,6 +159,10 @@ const Evaluation = () => {
             />
             <div className="random-info ml-4">
               <RenderMoveHistory moves={history} />
+              <button
+                onClick={handleUndo}
+                className="bg-indigo-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
+              >Undo</button>
               <p id="best-move">Nước đi: </p>
               <p id="is-game-over">Trạng thái: </p>
             </div>
