@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Chess } from "chess.js";
-import ChessBoard from "chessboardjsx";
-import { updateGameOverStatus } from "../func/gameStatus";
+import Chessboard from "chessboardjsx";
 import RenderMoveHistory from "../func/renderMoveHistory";
-import squareStyling from "../func/squareStyling";
-import { getValidMoves } from "../func/chess";
-import highlightSquare from "../func/highlightSquare";
 import { isMoveLegal } from "../func/chess";
+import { getValidMoves } from "../func/chess";
+import squareStyling from "../func/squareStyling";
+import highlightSquare from "../func/highlightSquare";
+import { updateGameOverStatus } from "../func/gameStatus";
 
 const Board = ({ children }) => {
   const [game, setGame] = useState();
@@ -32,12 +32,12 @@ const Board = ({ children }) => {
       to: targetSquare,
       promotion: "q",
     });
-
-    const aiMove = calculateBestMove(game);
-    game.move(aiMove);
+    setFen(game.fen());
+    makeBestMove(game);
     setHistory(game.history());
     setFen(game.fen());
 
+    // Cập nhật trạng thái kết thúc trò chơi
     updateGameOverStatus(game);
   };
 
@@ -57,67 +57,22 @@ const Board = ({ children }) => {
   const onMouseOutSquare = (square) => removeHighlightSquare(square);
 
   /* AI Part */
+  const makeBestMove = (game) => {
+    let bestMove = calculateBestMove(game);
+    if (bestMove === null || bestMove === undefined) {
+      return;
+    }
+    game.move(bestMove);
+  };
 
-  /* 
-  Tính toán giá trị tốt nhất theo tổng giá trị bàn cờ
-  Nếu giá trị âm => đen có lợi thế
-  */
   const calculateBestMove = (game) => {
     const newGameMoves = game.moves({ verbose: true });
-    let bestMove = null;
-    let bestValue = -9999; // giá trị âm lớn để khởi tạo
-    for (let i = 0; i < newGameMoves.length; i++) {
-      const newGameMove = newGameMoves[i];
-      game.move(newGameMove);
-
-      // Đánh giá giá trị bàn cờ sau khi di chuyển
-      const boardValue = -evaluateBoard(game.board());
-      game.undo();
-
-      if (boardValue > bestValue) {
-        bestValue = boardValue;
-        bestMove = newGameMove;
-      }
-    }
-    return bestMove;
+    const randomMove =
+      newGameMoves[Math.floor(Math.random() * newGameMoves.length)];
+    return randomMove;
   };
 
-  const evaluateBoard = (board) => {
-    let totalEvaluation = 0;
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        totalEvaluation += getPieceValue(board[i][j]);
-      }
-    }
-    return totalEvaluation;
-  };
-
-  const getPieceValue = (piece) => {
-    if (piece == null) {
-      return 0;
-    }
-    const absoluteValue = getAbsoluteValue(piece.type);
-    return piece.color === "w" ? absoluteValue : -absoluteValue;
-  };
-
-  const getAbsoluteValue = (piece) => {
-    switch (piece) {
-      case "p":
-        return 10;
-      case "r":
-        return 50;
-      case "n":
-        return 30;
-      case "b":
-        return 30;
-      case "q":
-        return 90;
-      case "k":
-        return 900;
-      default:
-        throw new Error(`Cờ ${piece} không đúng loại`);
-    }
-  };
+  /* End AI Part */
 
   return children({
     position: fen,
@@ -129,7 +84,7 @@ const Board = ({ children }) => {
   });
 };
 
-const Evaluation = () => {
+const RandomMove = () => {
   return (
     <div>
       <Board>
@@ -142,8 +97,8 @@ const Evaluation = () => {
           history,
         }) => (
           <div className="flex justify-between">
-            <ChessBoard
-              wwidth={600}
+            <Chessboard
+              width={600}
               position={position}
               onDrop={onDrop}
               squareStyles={squareStyles}
@@ -162,4 +117,4 @@ const Evaluation = () => {
   );
 };
 
-export default Evaluation;
+export default RandomMove;

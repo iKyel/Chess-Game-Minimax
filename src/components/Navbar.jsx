@@ -72,20 +72,22 @@ const Navbar = () => {
                 <div className="bg-gray-800 absolute top-0 left-full mt-0.5 w-64 h-full">
                   <div className="hover:bg-gray-700 cursor-pointer">
                     <a
-                      href="/test/MoveValidation"
+                      href="/test/BoardTest"
                       className="text-white block px-4 py-2"
                     >
-                      Move Validation
+                      BoardTest
                     </a>
                   </div>
+
                   <div className="hover:bg-gray-700 cursor-pointer">
                     <a
-                      href="/test/Stockfish"
+                      href="/test/RandomMove"
                       className="text-white block px-4 py-2"
                     >
-                      Stockfish
+                      RandomMove
                     </a>
                   </div>
+                  
                   <div className="hover:bg-gray-700 cursor-pointer">
                     <a
                       href="/test/Evaluation"
@@ -94,14 +96,7 @@ const Navbar = () => {
                       Evaluation
                     </a>
                   </div>
-                  <div className="hover:bg-gray-700 cursor-pointer">
-                    <a
-                      href="/test/BoardTest"
-                      className="text-white block px-4 py-2"
-                    >
-                      BoardTest
-                    </a>
-                  </div>
+                  
 
                   <div className="hover:bg-gray-700 cursor-pointer">
                     <a

@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { Chess } from "chess.js";
 import Chessboard from "chessboardjsx";
+import { updateGameOverStatus } from "../func/gameStatus";
+import { isMoveLegal } from "../func/chess";
+import RenderMoveHistory from "../func/renderMoveHistory";
+import { getValidMoves } from "../func/chess";
+import highlightSquare from "../func/highlightSquare";
+import squareStyling from "../func/squareStyling";
 
 const Board = ({ children }) => {
   const [game, setGame] = useState();
   const [fen, setFen] = useState("start");
+  const [squareStyles, setSquareStyles] = useState({});
+  const [history, setHistory] = useState([]); // lịch sử nước đi
+  const [pieceSquare] = useState("");
   const [allPositionCount, setAllPostitionCount] = useState(0);
   let positionCount = 0;
-  //   const [moveHistory, setMoveHistory] = useState([]);
 
   useEffect(() => {
     setGame(new Chess());
@@ -17,7 +25,7 @@ const Board = ({ children }) => {
 
   // Di chuyển quân cờ
   const onDrop = ({ sourceSquare, targetSquare }) => {
-    if (!isMoveLegal(sourceSquare, targetSquare)) {
+    if (!isMoveLegal(game, sourceSquare, targetSquare)) {
       return;
     }
 
@@ -29,22 +37,25 @@ const Board = ({ children }) => {
     setFen(game.fen());
 
     makeBestMove(game);
+    setHistory(game.history());
     setFen(game.fen());
-    if (game.isGameOver()) {
-      document.getElementById("isGameOver").innerHTML += `Game Over`;
-    }
+    updateGameOverStatus(game);
   };
 
-  // Kiểm tra nước đi hợp lệ
-  const isMoveLegal = (sourceSquare, targetSquare) => {
-    const moves = game.moves({ verbose: true });
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].from === sourceSquare && moves[i].to === targetSquare) {
-        return true;
-      }
-    }
-    return false;
+  // Lấy danh sách nước đi hợp lệ
+  const onMouseOverSquare = (square) => {
+    const validMoves = getValidMoves(game, square);
+    const highlightedStyles = highlightSquare(square, validMoves); // Tạo highlightStyles từ hàm highlightSquare
+    setSquareStyles((prevStyles) => ({ ...prevStyles, ...highlightedStyles })); // Cập nhật squareStyles
   };
+
+  // Loại bỏ màu ô vuông được tô
+  const removeHighlightSquare = () => {
+    setSquareStyles(squareStyling({ pieceSquare, history }));
+  };
+
+  // Loại bỏ tô sáng khi di chuột
+  const onMouseOutSquare = (square) => removeHighlightSquare(square);
 
   /* AI Part */
 
@@ -183,6 +194,10 @@ const Board = ({ children }) => {
   return children({
     position: fen,
     onDrop,
+    squareStyles,
+    onMouseOverSquare,
+    onMouseOutSquare,
+    history,
     handleUndo,
   });
 };
@@ -192,10 +207,26 @@ const Alpha_Beta_Pruning = () => {
     <div>
       <div>
         <Board>
-          {({ onDrop, position, handleUndo }) => (
+          {({
+            onDrop,
+            position,
+            squareStyles,
+            onMouseOverSquare,
+            onMouseOutSquare,
+            history,
+            handleUndo,
+          }) => (
             <div className="flex justify-between">
-              <Chessboard width={600} position={position} onDrop={onDrop} />
+              <Chessboard
+                width={600}
+                position={position}
+                onDrop={onDrop}
+                squareStyles={squareStyles}
+                onMouseOverSquare={onMouseOverSquare}
+                onMouseOutSquare={onMouseOutSquare}
+              />
               <div className="minimax-info ml-4">
+                <RenderMoveHistory moves={history} />
                 <button
                   onClick={handleUndo}
                   className="bg-indigo-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
@@ -209,7 +240,9 @@ const Alpha_Beta_Pruning = () => {
                 >
                   <option value="1">1</option>
                   <option value="2">2</option>
-                  <option value="3 selected">3</option>
+                  <option value="3" selected>
+                    3
+                  </option>
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>

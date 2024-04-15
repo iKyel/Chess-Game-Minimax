@@ -1,11 +1,21 @@
 import { useState, useEffect } from "react";
 import { Chess } from "chess.js";
 import Chessboard from "chessboardjsx";
+import { updateGameOverStatus } from "../func/gameStatus";
+import { isMoveLegal } from "../func/chess";
+import RenderMoveHistory from "../func/renderMoveHistory";
+import { getValidMoves } from "../func/chess";
+import highlightSquare from "../func/highlightSquare";
+import squareStyling from "../func/squareStyling";
 
 const Board = ({ children }) => {
   const [game, setGame] = useState();
   const [fen, setFen] = useState("start");
   const [allPositionCount, setAllPostitionCount] = useState(0);
+  const [squareStyles, setSquareStyles] = useState({});
+  const [history, setHistory] = useState([]); // lịch sử nước đi
+  const [pieceSquare] = useState("");
+
   let positionCount = 0;
 
   // const [moveHistory, setMoveHistory] = useState([]);
@@ -18,7 +28,7 @@ const Board = ({ children }) => {
 
   // Di chuyển quân cờ
   const onDrop = ({ sourceSquare, targetSquare }) => {
-    if (!isMoveLegal(sourceSquare, targetSquare)) {
+    if (!isMoveLegal(game, sourceSquare, targetSquare)) {
       return;
     }
 
@@ -30,23 +40,27 @@ const Board = ({ children }) => {
     setFen(game.fen());
 
     makeBestMove(game);
+    setHistory(game.history());
     setFen(game.fen());
-    if (game.isGameOver()) {
-      document.getElementById("isGameOver").innerHTML += `Game Over`;
-      // setAllowDrag(false);
-    }
+
+    updateGameOverStatus(game);
+    // setAllowDrag(false);
   };
 
-  // Kiểm tra nước đi hợp lệ
-  const isMoveLegal = (sourceSquare, targetSquare) => {
-    const moves = game.moves({ verbose: true });
-    for (let i = 0; i < moves.length; i++) {
-      if (moves[i].from === sourceSquare && moves[i].to === targetSquare) {
-        return true;
-      }
-    }
-    return false;
+  // Lấy danh sách nước đi hợp lệ
+  const onMouseOverSquare = (square) => {
+    const validMoves = getValidMoves(game, square);
+    const highlightedStyles = highlightSquare(square, validMoves); // Tạo highlightStyles từ hàm highlightSquare
+    setSquareStyles((prevStyles) => ({ ...prevStyles, ...highlightedStyles })); // Cập nhật squareStyles
   };
+
+  // Loại bỏ màu ô vuông được tô
+  const removeHighlightSquare = () => {
+    setSquareStyles(squareStyling({ pieceSquare, history }));
+  };
+
+  // Loại bỏ tô sáng khi di chuột
+  const onMouseOutSquare = (square) => removeHighlightSquare(square);
 
   /* AI Part */
 
@@ -91,7 +105,7 @@ const Board = ({ children }) => {
     document.getElementById("postitionCount").innerHTML =
       `Số vị trí đã tính toán: ${positionCount}` + " ";
     document.getElementById("allPostitionCount").innerHTML =
-      `Tổng số vị trí đã tính toán: ${allPositionCount+positionCount}` + " ";
+      `Tổng số vị trí đã tính toán: ${allPositionCount + positionCount}` + " ";
 
     return bestMoveFound;
   };
@@ -169,8 +183,11 @@ const Board = ({ children }) => {
   return children({
     position: fen,
     onDrop,
-    handleUndo,
-    // allowDrag,
+    squareStyles,
+    onMouseOverSquare,
+    onMouseOutSquare,
+    history,
+    handleUndo
   });
 };
 
@@ -179,14 +196,26 @@ const MiniMax = () => {
     <div>
       <div>
         <Board>
-          {({ onDrop, position, handleUndo }) => (
+          {({
+            onDrop,
+            position,
+            squareStyles,
+            onMouseOverSquare,
+            onMouseOutSquare,
+            history,
+            handleUndo,
+          }) => (
             <div className="flex justify-between">
               <Chessboard
                 width={600}
                 position={position}
                 onDrop={onDrop}
+                squareStyles={squareStyles}
+                onMouseOverSquare={onMouseOverSquare}
+                onMouseOutSquare={onMouseOutSquare}
               />
               <div className="minimax-info ml-4">
+                <RenderMoveHistory moves={history} />
                 <button
                   onClick={handleUndo}
                   className="bg-indigo-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
@@ -199,10 +228,10 @@ const MiniMax = () => {
                   className="block w-200 bg-black border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
                   <option value="1">1</option>
-                  <option value="2">
-                    2
+                  <option value="2">2</option>
+                  <option value="3" selected>
+                    3
                   </option>
-                  <option value="3" selected>3</option>
                   <option value="4">4</option>
                   <option value="5">5</option>
                 </select>
