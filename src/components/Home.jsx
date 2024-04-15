@@ -10,7 +10,7 @@ const Home = () => {
             real-time.
           </p>
           <a
-            href="/home"
+            href="/test/SimplifiedEvaluationFunction"
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
           >
             Play Now

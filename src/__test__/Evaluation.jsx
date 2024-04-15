@@ -33,6 +33,7 @@ const Board = ({ children }) => {
       promotion: "q",
     });
 
+    
     const aiMove = calculateBestMove(game);
     game.move(aiMove);
     setHistory(game.history());
@@ -84,6 +85,7 @@ const Board = ({ children }) => {
         bestMove = newGameMove;
       }
     }
+    document.getElementById('best-value').innerHTML = `Giá trị tốt nhất: ${bestValue}`
     return bestMove;
   };
 
@@ -163,7 +165,7 @@ const Evaluation = () => {
                 onClick={handleUndo}
                 className="bg-indigo-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
               >Undo</button>
-              <p id="best-move">Nước đi: </p>
+              <p id="best-value">Giá trị tốt nhất: </p>
               <p id="is-game-over">Trạng thái: </p>
             </div>
           </div>

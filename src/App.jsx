@@ -7,7 +7,6 @@ import {
 import HomePage from "./pages/HomePage";
 import MainLayout from "./layouts/MainLayout";
 import BoardTestPage from "./pages/BoardTestPage";
-
 import EvaluationPage from "./pages/EvaluationPage";
 import MinimaxPage from "./pages/MinimaxPage";
 import Alpha_betaPruningPage from "./pages/Alpha_betaPruningPage";

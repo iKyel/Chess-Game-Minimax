@@ -94,7 +94,7 @@ const RandomMove = () => {
           squareStyles,
           onMouseOverSquare,
           onMouseOutSquare,
-          history,
+          history
         }) => (
           <div className="flex justify-between">
             <Chessboard
@@ -107,7 +107,6 @@ const RandomMove = () => {
             />
             <div className="random-info ml-4">
               <RenderMoveHistory moves={history} />
-              <p id="best-move">Nước đi: </p>
               <p id="is-game-over">Trạng thái: </p>
             </div>
           </div>

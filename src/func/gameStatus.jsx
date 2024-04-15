@@ -10,6 +10,8 @@ export const updateGameOverStatus = (game) => {
       }
     } else if (game.isDraw()) {
       result = "Hòa!";
+    } else {
+      result = "Trò chơi kết thúc!";
     }
   
     // Cập nhật thông tin trạng thái lên phần tử HTML
